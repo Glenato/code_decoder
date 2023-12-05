@@ -1,10 +1,6 @@
 #used to manage files
 import os
 
-#use 2 list one with the command and the other one for the traduction ex: text1[1]=g10 text2[1]
-
-#creats a dictionnary of gcode_dictionnary.txt
-
 path_dictionnary= "gcode_dictionnary.txt"#I just changed my_dict into path, this may cause some errors
 
 #this fonction just let's you creat a custum dictionnary
@@ -18,7 +14,6 @@ def opendictionnary(p):
         print (my_dict)
     except:
         print ("Please enter a valid path")
-
 
 def translate(gcode_encrypted):
     #opens file 
@@ -54,15 +49,16 @@ def translate(gcode_encrypted):
         lenght_dict=len(my_dict)
         for i in range (len(lines2)):
             for k in range (lenght_dict):
-
                 try:
                     #checks if in dictionnary the value k is in lines2
                     if list(my_dict.keys())[k] in lines2[i]:
                         print ("ok")
-
-                        lines2[i] = lines2[i].replace(list(my_dict.keys())[k], my_dict[list(my_dict.keys())[k]]+" ")
+                        
                         #change the value of lines2 into the translation
+                        lines2[i] = lines2[i].replace(list(my_dict.keys())[k], my_dict[list(my_dict.keys())[k]]+" ")
+                        
                         k=+1
+                        
                         #adds @@@ at the beginning and end of a comment 
                     lines2_striped = lines2[i].removeprefix(";").lstrip()
 
@@ -70,8 +66,8 @@ def translate(gcode_encrypted):
                     if lines2_striped=="":
                         lines2[i]=""
 
+                    #add a @@@ at the beginning and end of the comment and removes the ;
                     if lines2[i].startswith(";"):
-                        #add a @@@ at the beginning and end of the comment and removes the ;
                         lines2[i] = lines2[i].replace(lines2[i],"@@@ "+lines2[i][1:]+" @@@")
 
                         #if the line before lines2[i] is not a comment add a new line
@@ -135,7 +131,6 @@ This are a few of the main commands :
 - translate : askes the gcode file adresse you want to decode and saves the output as a file name translated.txt           
 - syntaxe : shows the syntaxe used in the translated file
 - custom + path: give the name (if in the same folder as this program), or the path of a custom gcode syntax (by default marlin is used), if you decide to use this command, make sure to use the correct syntaxe (check the gcodedictionnary.txt file)
-
 - quit : exit this program\n""")
     
 print ("\nHi !\n")
@@ -170,7 +165,6 @@ while a==True:
     if user_input=="syntaxe":
         print ("""
 @@@ comment @@@ : in between to @@@ there is a comment that was in the original file
-  
 The special gcode syntaxe is replaced by redable english, ex : G1 F700 -> Linear Move F700
 """)
 

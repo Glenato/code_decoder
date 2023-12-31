@@ -1,3 +1,5 @@
-# gcode_decoder
+# Gcode_decoder
 
-is an programme letting you turn gcode (code read by 3d printers or cnc machines for exemple) into a more redable forme.
+- Fast and efficient programme letting you decode gcode
+- Allows you also to add custom dictionnarys (the default dictionnary used is Marlin)
+- and much more ...

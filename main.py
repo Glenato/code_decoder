@@ -1,5 +1,10 @@
 #used to manage files
 import os
+#used for the animation in terminal
+import sys
+import time
+
+#creats a dictionnary of gcode_dictionnary.txt
 
 path_dictionnary= "gcode_dictionnary.txt"#I just changed my_dict into path, this may cause some errors
 
@@ -15,6 +20,7 @@ def opendictionnary(p):
     except:
         print ("Please enter a valid path")
 
+
 def translate(gcode_encrypted):
     #opens file 
     with open (gcode_encrypted,"r") as gcode_file_encrypted:
@@ -24,8 +30,7 @@ def translate(gcode_encrypted):
         lines2=lines
         #this loop remove the extra lines if your gcode has some
         opendictionnary(path_dictionnary)
-        for i in range (len(lines)):
-            lines2[i]=lines[i].replace("\n","")
+        lines2 = [line.replace("\n", "") for line in lines]
         
         #makes a temporary variable used to remove elements who have nothing in them
         to_remove=[]
@@ -47,18 +52,22 @@ def translate(gcode_encrypted):
 
         #lines2 is a list of the gcode initial file where every line is separated
         lenght_dict=len(my_dict)
+
         for i in range (len(lines2)):
+
             for k in range (lenght_dict):
+
                 try:
                     #checks if in dictionnary the value k is in lines2
                     if list(my_dict.keys())[k] in lines2[i]:
-                        print ("ok")
-                        
-                        #change the value of lines2 into the translation
+
+                        #sys.stdout.write("\rLoading {:.0f}%".format(k / lenght_dict * 100))
+                        #sys.stdout.flush()
+
+
                         lines2[i] = lines2[i].replace(list(my_dict.keys())[k], my_dict[list(my_dict.keys())[k]]+" ")
-                        
-                        k=+1
-                        
+                        #change the value of lines2 into the translation
+                        k += 1
                         #adds @@@ at the beginning and end of a comment 
                     lines2_striped = lines2[i].removeprefix(";").lstrip()
 
@@ -66,8 +75,8 @@ def translate(gcode_encrypted):
                     if lines2_striped=="":
                         lines2[i]=""
 
-                    #add a @@@ at the beginning and end of the comment and removes the ;
                     if lines2[i].startswith(";"):
+                        #add a @@@ at the beginning and end of the comment and removes the ;
                         lines2[i] = lines2[i].replace(lines2[i],"@@@ "+lines2[i][1:]+" @@@")
 
                         #if the line before lines2[i] is not a comment add a new line
@@ -82,21 +91,30 @@ def translate(gcode_encrypted):
                     if ";" in lines2[i]:
                         lines2[i]=lines2[i].replace(";", "   @@@ ")
                         lines2[i]=lines2[i]+" @@@"
-                    
+
                     else:
-                        k=+1  
+                        k += 1  
+                        
                 except:
                     print ("error 5")
+
+            #add loading 
+            sys.stdout.write("\rLoading ----- {:.2f}%".format(i / len(lines2) * 100)+" -----")
+            sys.stdout.flush()
+
         for i in range(len(lines2)):
             #if a element of the list lines2 has nothing it is removed
             if lines2[i] == "":
                 to_remove.append(i)
 
+
         #separates each element of the list by a nex line
         output="\n".join(lines2)
 
+
         #delet all the useless variables
         del(to_remove,lenght_dict,k,lines, lines2, i, gcode_encrypted, gcode_file_encrypted)
+
 
         #checks if translated.txt is available if not it tries to use translated(a_number).txt
         a=os.listdir()
@@ -119,9 +137,10 @@ def translate(gcode_encrypted):
         try:
             with open(name+".txt", 'w') as file:
                 file.write(str(output))
-                print ("Finished")
+                print ("\nFinished")
         except Exception as e:
             print(f"An error occurred: {e}")
+
 
 #prints out the help menu
 def help():
@@ -131,6 +150,7 @@ This are a few of the main commands :
 - translate : askes the gcode file adresse you want to decode and saves the output as a file name translated.txt           
 - syntaxe : shows the syntaxe used in the translated file
 - custom + path: give the name (if in the same folder as this program), or the path of a custom gcode syntax (by default marlin is used), if you decide to use this command, make sure to use the correct syntaxe (check the gcodedictionnary.txt file)
+
 - quit : exit this program\n""")
     
 print ("\nHi !\n")
@@ -139,6 +159,7 @@ help()
 
 #main loop, asks the user commands and calls functions
 a=True
+
 while a==True:
 
     user_input = input("Enter a command : ").lower()
@@ -165,6 +186,7 @@ while a==True:
     if user_input=="syntaxe":
         print ("""
 @@@ comment @@@ : in between to @@@ there is a comment that was in the original file
+  
 The special gcode syntaxe is replaced by redable english, ex : G1 F700 -> Linear Move F700
 """)
 
